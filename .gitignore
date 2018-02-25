@@ -3,6 +3,7 @@
 *.conf
 *.md
 *.png
+TODO
 # sbt specific
 .cache
 .history
