@@ -20,19 +20,24 @@ object ApplicationHandler {
   def runApp: Unit = {
     val joinedRdd = customerTable join salesTable
     val yearlyReport = joinedRdd
-      .map(x => ((x._2._1.city, x._2._2.date.getYear + 1900, x._1),x._2._2.sales))
+      .map(joinedTuple => ((joinedTuple._2._1.city, joinedTuple._2._2.date.getYear + 1900, joinedTuple._1),joinedTuple._2._2.sales))
       .reduceByKey(_ + _)
-      .map(y => s"${y._1._1}#${y._1._2}###${y._2}")
+      .map(deducedTuple => s"${deducedTuple._1._1}#${deducedTuple._1._2}###${deducedTuple._2}")
 
     val monthlyReport = joinedRdd.
-      map(x => ((x._2._1.city, x._2._2.date.getYear + 1900, x._2._2.date.getMonth + 1, x._1),x._2._2.sales))
+      map(joinedTuple => ((joinedTuple._2._1.city, joinedTuple._2._2.date.getYear + 1900, joinedTuple._2._2.date.getMonth + 1, joinedTuple._1),joinedTuple._2._2.sales))
       .reduceByKey(_ + _)
       .map(y => s"${y._1._1}#${y._1._2}#${y._1._3}##${y._2}")
 
     val dailyReport = joinedRdd
-      .map(x => ((x._2._1.city, x._2._2.date.getYear + 1900, x._2._2.date.getMonth + 1, x._2._2.date.getDate, x._1),x._2._2.sales))
+      .map(joinedTuple => ((joinedTuple._2._1.city, joinedTuple._2._2.date.getYear + 1900, joinedTuple._2._2.date.getMonth + 1, joinedTuple._2._2.date.getDate, joinedTuple._1),joinedTuple._2._2.sales))
       .reduceByKey(_ + _)
-      .map(y => s"${y._1._1}#${y._1._2}#${y._1._3}#${y._1._3}#${y._2}")
+      .map(deducedTuple => s"${deducedTuple._1._1}#${deducedTuple._1._2}#${deducedTuple._1._3}#${deducedTuple._1._3}#${deducedTuple._2}")
+
+    yearlyReport union monthlyReport union dailyReport map(x => {
+      val city = x.split('#')(0)
+      (city, x)
+    })
 
     logger.info(s"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n${yearlyReport.collect.toList}\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
     logger.info(s"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n${monthlyReport.collect.toList}\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
