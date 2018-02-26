@@ -39,12 +39,6 @@ object ApplicationHandler {
       (city, x)
     })
     collective.sortBy(x => x._1).map(x => x._2).repartition(1).saveAsTextFile("/home/knoldus/Desktop/Assignments/spark-assignment/finalOutput")
-//    collective.repartition(1).saveAsTextFile()
-//    collective.groupBy(x => x._1).map(y => y._2).saveAsTextFile("/home/knoldus/Desktop/Assignments/spark-assignment/finalOutput")
-
-    logger.info(s"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n${yearlyReport.collect.toList}\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-    logger.info(s"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n${monthlyReport.collect.toList}\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-    logger.info(s"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n${dailyReport.collect.toList}\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
   }
 
 
